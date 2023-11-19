@@ -1,3 +1,9 @@
+//sfml tutorial used to make - https://www.youtube.com/watch?v=R87RUYUfgwM&list=PLlRog_mTDrIy4UN7L6w6gZuYR9MqYFgEA&index=15&t=6s
+
+//sfml documentation - https://www.sfml-dev.org/documentation/2.6.1/
+
+//box2d documentation - https://box2d.org/documentation/
+
 #include <string>
 #include <iostream>
 #include <SFML/Graphics.hpp>
@@ -9,6 +15,8 @@ using namespace sf;
 
 Vector2f mtpfp(b2Vec2 position)
 {
+	//function to change a b2Vec2 to a Vector2f
+
 	float x = position(0);
 	float y = position(1);
 
@@ -18,6 +26,8 @@ Vector2f mtpfp(b2Vec2 position)
 	Vector2f a(x, y);
 
 	return a;
+
+	//
 
 }
 
@@ -130,15 +140,26 @@ int main()
 
 		for (int32 i = 0; i < 60; ++i)
 		{
+
 			world.Step(timeStep, velocityIterations, positionIterations);
+
+			//gets and sets the position for both box2d and sfml
+
 			b2Vec2 position = body->GetPosition();
 			Vector2f sfmlPos = mtpfp(position);
 			rect.setPosition(sfmlPos);
 			float angle = body->GetAngle();
 			rect.setRotation(angle);
+
+			//
+
+			//prints out the position of the example box
+
 			printf("%4.2f %4.2f %4.2f\n", position.x, position.y, angle);
 
-			//render 
+			//
+			
+			//render - draws all of the objects on the screen
 
 			window.clear();
 			window.draw(rect);
@@ -157,4 +178,6 @@ int main()
 	}
 
 }
+
+
 
