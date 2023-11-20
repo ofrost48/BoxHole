@@ -81,8 +81,6 @@ int main()
 	body->CreateFixture(&fixtureDef);
 
 	RectangleShape rect;
-	Vector2f rectanglePosition(300, 100);
-	rect.setPosition(rectanglePosition);
 	rect.setSize(Vector2f(32, 32));
 
 	//
