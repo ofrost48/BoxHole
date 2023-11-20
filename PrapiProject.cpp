@@ -44,7 +44,7 @@ int main()
 	//creates the ground body for box2d - this stops things falling out the screen
 
 	b2BodyDef groundBodyDef;
-	groundBodyDef.position.Set(0.0f, 37.0f);
+	groundBodyDef.position.Set(0.0f, 37.5f);
 
 	b2Body* groundBody = world.CreateBody(&groundBodyDef);
 
@@ -83,7 +83,7 @@ int main()
 	RectangleShape rect;
 	Vector2f rectanglePosition(300, 100);
 	rect.setPosition(rectanglePosition);
-	rect.setSize(Vector2f(50, 50));
+	rect.setSize(Vector2f(32, 32));
 
 	//
 
@@ -121,7 +121,7 @@ int main()
 	while (window.isOpen())
 	{
 
-		//event checker - checks and event is running and closes window if needed
+		//event checker - checks and event is running and closes window if needed/on esc
 
 		Event event;
 
@@ -150,12 +150,6 @@ int main()
 			rect.setPosition(sfmlPos);
 			float angle = body->GetAngle();
 			rect.setRotation(angle);
-
-			//
-
-			//prints out the position of the example box
-
-			printf("%4.2f %4.2f %4.2f\n", position.x, position.y, angle);
 
 			//
 			
