@@ -8,6 +8,10 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "box2d/box2d.h"
+#include "box2d/b2_api.h"
+#include "box2d/b2_joint.h"
+#include "box2d/b2_distance_joint.h"
+#include "box2d/b2_world.h"
 #include <stdio.h>
 using namespace std;
 using namespace sf;
@@ -20,8 +24,8 @@ Vector2f mtpfp(b2Vec2 position)
 	float x = position(0);
 	float y = position(1);
 
-	x = x * 32;
-	y = y * 32;
+	x = x * 50;
+	y = y * 50;
 
 	Vector2f a(x, y);
 
@@ -44,7 +48,7 @@ int main()
 	//creates the ground body for box2d - this stops things falling out the screen
 
 	b2BodyDef groundBodyDef;
-	groundBodyDef.position.Set(0.0f, 37.5f);
+	groundBodyDef.position.Set(0.0f, 27.7f);
 
 	b2Body* groundBody = world.CreateBody(&groundBodyDef);
 
@@ -55,11 +59,34 @@ int main()
 
 	//
 
+	//wall bodies
+
+	b2BodyDef wallBody1Def;
+	wallBody1Def.position.Set(-1.5f, 0.0f);
+
+	b2Body* wall1Body = world.CreateBody(&wallBody1Def);
+
+	b2PolygonShape wall1Box;
+	wall1Box.SetAsBox(1.0f, 50.0f);
+
+	wall1Body->CreateFixture(&wall1Box, 0.0f);
+
+	b2BodyDef wallBody2Def;
+	wallBody2Def.position.Set(14.0f, 0.0f);
+
+	b2Body* wall2Body = world.CreateBody(&wallBody2Def);
+
+	b2PolygonShape wall2Box;
+	wall2Box.SetAsBox(1.0f, 50.0f);
+
+	wall2Body->CreateFixture(&wall2Box, 0.0f);
+
+	//
+
 	//makes the window
 
 	RenderWindow window(VideoMode(680, 900), "window");
 	window.setFramerateLimit(60);
-
 
 	//
 
@@ -67,7 +94,7 @@ int main()
 
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;
-	bodyDef.position.Set(10.0f, 5.0f);
+	bodyDef.position.Set(10.0f, 2.5f);
 	b2Body* body = world.CreateBody(&bodyDef);
 
 	b2PolygonShape dynamicBox;
@@ -81,27 +108,45 @@ int main()
 	body->CreateFixture(&fixtureDef);
 
 	RectangleShape rect;
-	rect.setSize(Vector2f(32, 32));
+	rect.setSize(Vector2f(50, 50));
+
+	//
+
+	//body for distance joint
+
+	b2BodyDef jointBodyDef;
+	jointBodyDef.type = b2_staticBody;
+	jointBodyDef.position.Set(6.25f, 2.5f);
+	b2Body* jointBody = world.CreateBody(&jointBodyDef);
+
+	//
+
+	//making distance joint
+	
+	b2DistanceJointDef jointDef;
+	jointDef.Initialize(jointBody, body, jointBodyDef.position, bodyDef.position);
+	jointDef.collideConnected = true;
+	b2Joint* pendulum = world.CreateJoint(&jointDef);
 
 	//
 
 	//makes the outer lines
 
 	RectangleShape leftline;
-	leftline.setPosition(20, 20);
+	leftline.setPosition(21, 20);
 	leftline.setSize(Vector2f(5, 860));
 
 	RectangleShape rightline;
-	rightline.setPosition(640, 20);
+	rightline.setPosition(649, 20);
 	rightline.setSize(Vector2f(5, 860));
 
 	RectangleShape topline;
-	topline.setPosition(20, 20);
-	topline.setSize(Vector2f(620, 5));
+	topline.setPosition(21, 20);
+	topline.setSize(Vector2f(628, 5));
 
 	RectangleShape botline;
-	botline.setPosition(20, 880);
-	botline.setSize(Vector2f(625, 5));
+	botline.setPosition(21, 880);
+	botline.setSize(Vector2f(633, 5));
 
 	//
 
@@ -150,7 +195,7 @@ int main()
 			rect.setRotation(angle);
 
 			//
-			
+
 			//render - draws all of the objects on the screen
 
 			window.clear();
@@ -160,6 +205,19 @@ int main()
 			window.draw(topline);
 			window.draw(botline);
 			window.display();
+
+			//
+
+			//destroys joint if "a" is pressed 
+
+			if (Keyboard::isKeyPressed(Keyboard::A))
+			{
+				if (pendulum != NULL) 
+				{
+					world.DestroyJoint(pendulum);
+					pendulum = NULL;
+				}
+			}
 
 			//
 
