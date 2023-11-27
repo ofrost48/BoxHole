@@ -119,7 +119,7 @@ int main()
 	fixtureDef.friction = 0.1f;
 	
 	//restitution is how much bounce it has 
-	fixtureDef.restitution = 5.0f;
+	fixtureDef.restitution = 0.5f;
 
 	body->CreateFixture(&fixtureDef);
 
@@ -210,6 +210,7 @@ int main()
 			Vector2f sfmlPos = mtpfp(position);
 			rect.setPosition(sfmlPos);
 			float angle = body->GetAngle();
+			angle = angle * 57.2958;
 			rect.setRotation(angle);
 
 			//
