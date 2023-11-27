@@ -80,6 +80,17 @@ int main()
 	wall2Box.SetAsBox(1.0f, 50.0f);
 
 	wall2Body->CreateFixture(&wall2Box, 0.0f);
+#
+
+	b2BodyDef roofBodyDef;
+	roofBodyDef.position.Set(0.0f, -10.0f);
+
+	b2Body* roofBody = world.CreateBody(&roofBodyDef);
+
+	b2PolygonShape roofBox;
+	roofBox.SetAsBox(50.0f, 10.0f);
+
+	roofBody->CreateFixture(&roofBox, 0.0f);
 
 	//
 
@@ -108,7 +119,7 @@ int main()
 	fixtureDef.friction = 0.1f;
 	
 	//restitution is how much bounce it has 
-	fixtureDef.restitution = 0.5f;
+	fixtureDef.restitution = 5.0f;
 
 	body->CreateFixture(&fixtureDef);
 
