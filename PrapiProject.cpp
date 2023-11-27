@@ -83,7 +83,7 @@ int main()
 #
 
 	b2BodyDef roofBodyDef;
-	roofBodyDef.position.Set(0.0f, -10.0f);
+	roofBodyDef.position.Set(0.0f, -10.5f);
 
 	b2Body* roofBody = world.CreateBody(&roofBodyDef);
 
