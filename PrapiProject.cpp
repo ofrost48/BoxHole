@@ -90,6 +90,8 @@ int main()
 
 	//
 
+	//need to make into a function
+
 	//makes the shape 
 
 	b2BodyDef bodyDef;
@@ -103,7 +105,10 @@ int main()
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &dynamicBox;
 	fixtureDef.density = 1.0f;
-	fixtureDef.friction = 0.3f;
+	fixtureDef.friction = 0.1f;
+	
+	//restitution is how much bounce it has 
+	fixtureDef.restitution = 0.5f;
 
 	body->CreateFixture(&fixtureDef);
 
@@ -129,6 +134,8 @@ int main()
 	b2Joint* pendulum = world.CreateJoint(&jointDef);
 
 	//
+
+	//^make function with above 
 
 	//makes the outer lines
 
