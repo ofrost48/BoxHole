@@ -12,6 +12,7 @@
 #include "box2d/b2_joint.h"
 #include "box2d/b2_distance_joint.h"
 #include "box2d/b2_world.h"
+
 #include <stdio.h>
 using namespace std;
 using namespace sf;
@@ -48,7 +49,7 @@ int main()
 	//creates the ground body for box2d - this stops things falling out the screen
 
 	b2BodyDef groundBodyDef;
-	groundBodyDef.position.Set(0.0f, 27.7f);
+	groundBodyDef.position.Set(0.0f, 27.2f);
 
 	b2Body* groundBody = world.CreateBody(&groundBodyDef);
 
@@ -62,7 +63,7 @@ int main()
 	//wall bodies
 
 	b2BodyDef wallBody1Def;
-	wallBody1Def.position.Set(-1.5f, 0.0f);
+	wallBody1Def.position.Set(-1.0f, 0.0f);
 
 	b2Body* wall1Body = world.CreateBody(&wallBody1Def);
 
@@ -72,7 +73,7 @@ int main()
 	wall1Body->CreateFixture(&wall1Box, 0.0f);
 
 	b2BodyDef wallBody2Def;
-	wallBody2Def.position.Set(14.0f, 0.0f);
+	wallBody2Def.position.Set(13.5f, 0.0f);
 
 	b2Body* wall2Body = world.CreateBody(&wallBody2Def);
 
@@ -83,7 +84,7 @@ int main()
 #
 
 	b2BodyDef roofBodyDef;
-	roofBodyDef.position.Set(0.0f, -10.5f);
+	roofBodyDef.position.Set(0.0f, -10.f);
 
 	b2Body* roofBody = world.CreateBody(&roofBodyDef);
 
@@ -101,17 +102,18 @@ int main()
 
 	//
 
-	//need to make into a function
-
 	//makes the shape 
 
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;
 	bodyDef.position.Set(10.0f, 2.5f);
-	b2Body* body = world.CreateBody(&bodyDef);
+	b2Body* body[150];
+	body[1] = { world.CreateBody(&bodyDef) };
+	body[1]->SetFixedRotation(true);	//fixes rotation so no spinning
+
 
 	b2PolygonShape dynamicBox;
-	dynamicBox.SetAsBox(1.0f, 1.0f);
+	dynamicBox.SetAsBox(0.5f, 0.5f);
 
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &dynamicBox;
@@ -121,10 +123,10 @@ int main()
 	//restitution is how much bounce it has 
 	fixtureDef.restitution = 0.5f;
 
-	body->CreateFixture(&fixtureDef);
+	body[1]->CreateFixture(&fixtureDef);
 
-	RectangleShape rect;
-	rect.setSize(Vector2f(50, 50));
+	RectangleShape rect[150];
+	rect[1].setSize(Vector2f(50, 50));
 
 	//
 
@@ -140,13 +142,11 @@ int main()
 	//making distance joint
 	
 	b2DistanceJointDef jointDef;
-	jointDef.Initialize(jointBody, body, jointBodyDef.position, bodyDef.position);
+	jointDef.Initialize(jointBody, body[1], jointBodyDef.position, bodyDef.position);
 	jointDef.collideConnected = true;
 	b2Joint* pendulum = world.CreateJoint(&jointDef);
 
 	//
-
-	//^make function with above 
 
 	//makes the outer lines
 
@@ -166,6 +166,10 @@ int main()
 	botline.setPosition(21, 880);
 	botline.setSize(Vector2f(633, 5));
 
+	RectangleShape test;
+	test.setSize(Vector2f(50, 50));
+	test.setPosition(50, 50);
+
 	//
 
 	//sets the timestep and iterations for the box2d sim
@@ -174,6 +178,13 @@ int main()
 
 	int32 velocityIterations = 8;
 	int32 positionIterations = 3;
+
+	//
+
+	//variables used in making more boxes
+
+	int j = 1;
+	bool makeNew = false;
 
 	//
 
@@ -193,52 +204,81 @@ int main()
 
 			if (Keyboard::isKeyPressed(Keyboard::Escape)) window.close();
 
+			//drops box if key released 
+
+			if (event.type == Event::KeyReleased)
+			{
+				if (pendulum != NULL)
+				{
+					world.DestroyJoint(pendulum);
+					pendulum = NULL;
+					j = j + 1;
+					makeNew = true;
+				}
+			}
+
+			//
+
 		}
 
 		//
 
 		//sim loop for box2d
 
-		for (int32 i = 0; i < 60; ++i)
+		for (int32 i = 0; i < 30; ++i)
 		{
 
 			world.Step(timeStep, velocityIterations, positionIterations);
+			
+			//making boxes 
 
-			//gets and sets the position for both box2d and sfml
-
-			b2Vec2 position = body->GetPosition();
-			Vector2f sfmlPos = mtpfp(position);
-			rect.setPosition(sfmlPos);
-			float angle = body->GetAngle();
-			angle = angle * 57.2958;
-			rect.setRotation(angle);
-
-			//
-
-			//render - draws all of the objects on the screen
-
-			window.clear();
-			window.draw(rect);
-			window.draw(leftline);
-			window.draw(rightline);
-			window.draw(topline);
-			window.draw(botline);
-			window.display();
-
-			//
-
-			//destroys joint if "a" is pressed 
-
-			if (Keyboard::isKeyPressed(Keyboard::A))
+			if (makeNew == true)
 			{
-				if (pendulum != NULL) 
-				{
-					world.DestroyJoint(pendulum);
-					pendulum = NULL;
-				}
+				makeNew = false;
+				body[j] = world.CreateBody(&bodyDef);
+				body[j]->SetFixedRotation(true);		//fixes rotation so no spinning 
+				body[j]->CreateFixture(&fixtureDef);
+				rect[j].setSize(Vector2f(50, 50));
+				jointDef.Initialize(jointBody, body[j], jointBodyDef.position, bodyDef.position);
+				pendulum = world.CreateJoint(&jointDef);
 			}
 
 			//
+
+			window.clear(); //clears window
+
+			for (int k = 0; k < j; ++k)
+			{
+
+				//gets and sets the position for both box2d and sfml
+
+				int l = k + 1;
+				b2Vec2 position = body[l]->GetPosition();
+				Vector2f sfmlPos = mtpfp(position);
+				rect[l].setPosition(sfmlPos);
+				//float angle = body[l]->GetAngle();
+				//angle = angle * -57.2958;
+				//rect[l].setRotation(angle);
+
+				//
+
+				
+
+				//render - draws all of the objects on the screen
+
+				window.draw(leftline);
+				window.draw(rightline);
+				window.draw(topline);
+				window.draw(botline);
+				window.draw(rect[l]);
+				window.draw(test);
+
+				//
+
+			}
+
+			window.display(); //displays drawn objects
+			cout << j << endl;
 
 		}
 
