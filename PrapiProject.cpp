@@ -12,10 +12,10 @@
 #include "box2d/b2_joint.h"
 #include "box2d/b2_distance_joint.h"
 #include "box2d/b2_world.h"
-
 #include <stdio.h>
-using namespace std;
-using namespace sf;
+
+using namespace std;		//standard namespace 
+using namespace sf;			//sfml namespace 
 
 
 Vector2f mtpfp(b2Vec2 position)
@@ -25,10 +25,10 @@ Vector2f mtpfp(b2Vec2 position)
 	float x = position(0);
 	float y = position(1);
 
-	x = x * 50;
+	x = x * 50;		//conversion rate for box2d to sfml (https://box2d.org/posts/2011/12/pixels/)
 	y = y * 50;
 
-	Vector2f a(x, y);
+	Vector2f a(x, y);	//creates a vector2f with the converted values
 
 	return a;
 
@@ -256,9 +256,12 @@ int main()
 				b2Vec2 position = body[l]->GetPosition();	//gets the position of the box2d body 
 				Vector2f sfmlPos = mtpfp(position);			//goes to a function that converts the value from metres(box2d) to pixels(sfml)
 				rect[l].setPosition(sfmlPos);				//sets the sfml rectangle to match the box2d body
-				//float angle = body[l]->GetAngle();
-				//angle = angle * -57.2958;					//rotation turned off temoprarily until a fix for misalligned boxes is found 
-				//rect[l].setRotation(angle);
+				
+				//rotation turned off temoprarily until a fix for misalligned boxes is found
+				
+				//float angle = body[l]->GetAngle();		//gets the angle of the box from box2d
+				//angle = angle * -57.2958;					//converts from anticlockwise radians to clockwise degrees	 
+				//rect[l].setRotation(angle);				//sets the angle of the sfml rectangle 
 
 				//
 
