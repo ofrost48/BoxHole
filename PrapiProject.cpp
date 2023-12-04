@@ -19,8 +19,8 @@ Vector2f mtpfp(b2Vec2 position)
 {
 	//function to change a b2Vec2 to a Vector2f
 
-	float x = position(0);
-	float y = position(1);
+	float x = position(0);	//breaks the b2_vector variable and grabs one of the components 
+	float y = position(1);	//does the same as above 
 
 	x = x * 50;		//conversion rate for box2d to sfml (https://box2d.org/posts/2011/12/pixels/)
 	y = y * 50;
