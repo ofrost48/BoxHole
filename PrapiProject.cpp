@@ -9,9 +9,6 @@
 #include <SFML/Graphics.hpp>
 #include "box2d/box2d.h"
 #include "box2d/b2_api.h"
-#include "box2d/b2_joint.h"
-#include "box2d/b2_distance_joint.h"
-#include "box2d/b2_world.h"
 #include <stdio.h>
 
 using namespace std;		//standard namespace 
