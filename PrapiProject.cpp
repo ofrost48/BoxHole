@@ -39,7 +39,7 @@ Vector2f mtpfp(b2Vec2 position)
 int main()
 {
 
-	//makes the box2d world - this  holds everything inside it
+	//makes the box2d world - this  holds everything inside - also has the gravity 
 
 	b2Vec2 gravity(0.0f, 10.0f);
 	b2World world(gravity);
@@ -49,18 +49,18 @@ int main()
 	//creates the ground body for box2d - this stops things falling out the screen
 
 	b2BodyDef groundBodyDef;
-	groundBodyDef.position.Set(0.0f, 27.2f);
+	groundBodyDef.position.Set(0.0f, 27.2f);					//defines the size of the groundbox
 
-	b2Body* groundBody = world.CreateBody(&groundBodyDef);
+	b2Body* groundBody = world.CreateBody(&groundBodyDef);		//creates the groundbox in the world 
 
 	b2PolygonShape groundBox;
-	groundBox.SetAsBox(50.0f, 10.0f);
+	groundBox.SetAsBox(50.0f, 10.0f);							//sets the size of the groundbox
 
-	groundBody->CreateFixture(&groundBox, 0.0f);
+	groundBody->CreateFixture(&groundBox, 0.0f);				//creates a fixture between the groundbox body and the box itself 
 
 	//
 
-	//wall bodies
+	//wall bodies - functionally the same as the ground box
 
 	b2BodyDef wallBody1Def;
 	wallBody1Def.position.Set(-1.0f, 0.0f);
@@ -97,58 +97,58 @@ int main()
 
 	//makes the window
 
-	RenderWindow window(VideoMode(680, 900), "window");
-	window.setFramerateLimit(60);
+	RenderWindow window(VideoMode(680, 900), "window");		//creates/names/scales the sfml window
+	window.setFramerateLimit(60);							//limits the framerate of the window
 
 	//
 
-	//makes the shape 
+	//makes the shape definition and the first box
 
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;
-	bodyDef.position.Set(10.0f, 2.5f);
-	b2Body* body[150];
-	body[1] = { world.CreateBody(&bodyDef) };
-	body[1]->SetFixedRotation(true);	//fixes rotation so no spinning
+	bodyDef.position.Set(10.0f, 2.5f);						//sets the starting position of the boxes
+	b2Body* body[200];										//creates an array of all the boxes that can be made during runtime
+	body[1] = { world.CreateBody(&bodyDef) };				//creates the body in the world
+	body[1]->SetFixedRotation(true);						//fixes rotation so no spinning
 
 
-	b2PolygonShape dynamicBox;
-	dynamicBox.SetAsBox(0.5f, 0.5f);
+	b2PolygonShape dynamicBox;								//sets shape as dynamic box so that it can be moved 
+	dynamicBox.SetAsBox(0.5f, 0.5f);						//sets the size of the boxes 
 
-	b2FixtureDef fixtureDef;
-	fixtureDef.shape = &dynamicBox;
-	fixtureDef.density = 1.0f;
-	fixtureDef.friction = 0.1f;
+	b2FixtureDef fixtureDef;								
+	fixtureDef.shape = &dynamicBox;							//assigns the fixture to the dynamic box shape
+	fixtureDef.density = 1.0f;								//assigns the density of the box 
+	fixtureDef.friction = 0.05f;							//assigns the friction of the box
 	
 	//restitution is how much bounce it has 
-	fixtureDef.restitution = 0.5f;
+	fixtureDef.restitution = 0.5f;							//assigns the amount of bounce each box has 
 
-	body[1]->CreateFixture(&fixtureDef);
+	body[1]->CreateFixture(&fixtureDef);					//creates the fixture between body and shape fort he boxes
 
-	RectangleShape rect[150];
-	rect[1].setSize(Vector2f(50, 50));
+	RectangleShape rect[150];								//creates an array of empty rectangle shapes 
+	rect[1].setSize(Vector2f(50, 50));						//sets the size of the first one 
 
 	//
 
 	//body for distance joint
 
 	b2BodyDef jointBodyDef;
-	jointBodyDef.type = b2_staticBody;
-	jointBodyDef.position.Set(6.25f, 2.5f);
-	b2Body* jointBody = world.CreateBody(&jointBodyDef);
+	jointBodyDef.type = b2_staticBody;						//sets the joint as static 
+	jointBodyDef.position.Set(6.25f, 2.5f);					//position if the joints body
+	b2Body* jointBody = world.CreateBody(&jointBodyDef);	//creates the joints body
 
 	//
 
 	//making distance joint
 	
 	b2DistanceJointDef jointDef;
-	jointDef.Initialize(jointBody, body[1], jointBodyDef.position, bodyDef.position);
-	jointDef.collideConnected = true;
-	b2Joint* pendulum = world.CreateJoint(&jointDef);
+	jointDef.Initialize(jointBody, body[1], jointBodyDef.position, bodyDef.position);	//defines how the first joint will initialize 
+	jointDef.collideConnected = true;													//adds collisions to the joint
+	b2Joint* pendulum = world.CreateJoint(&jointDef);									//creates the first joint
 
 	//
 
-	//makes the outer lines
+	//makes the outer lines - sets the size and position of 4 sfml boxes to act as the walls and roof/floor
 
 	RectangleShape leftline;
 	leftline.setPosition(21, 20);
@@ -183,8 +183,8 @@ int main()
 
 	//variables used in making more boxes
 
-	int j = 1;
-	bool makeNew = false;
+	int j = 1;					//tracks how many boxes have been made 
+	bool makeNew = false;		//is true when a new box has to be made 
 
 	//
 
@@ -200,20 +200,20 @@ int main()
 		while (window.pollEvent(event))
 		{
 
-			if (event.type == Event::Closed) window.close();
+			if (event.type == Event::Closed) window.close();				//checks if event closed is true and if it is it closes the window
 
-			if (Keyboard::isKeyPressed(Keyboard::Escape)) window.close();
+			if (Keyboard::isKeyPressed(Keyboard::Escape)) window.close();	//closes window if the escape key is pressed 
 
 			//drops box if key released 
 
-			if (event.type == Event::KeyReleased)
+			if (event.type == Event::KeyReleased)		//if a key is released 
 			{
-				if (pendulum != NULL)
+				if (pendulum != NULL)					//if there is no active distance joint 
 				{
-					world.DestroyJoint(pendulum);
-					pendulum = NULL;
-					j = j + 1;
-					makeNew = true;
+					world.DestroyJoint(pendulum);		//destroys the distance joint
+					pendulum = NULL;					//sets pendulum to null stops this from happening repeatedly
+					j = j + 1;							//increments j as a new box will be made after this 
+					makeNew = true;						//sets makenew to true so a new box will be created 
 				}
 			}
 
@@ -232,32 +232,32 @@ int main()
 			
 			//making boxes 
 
-			if (makeNew == true)
+			if (makeNew == true)																		//if makenew is true 
 			{
-				makeNew = false;
-				body[j] = world.CreateBody(&bodyDef);
-				body[j]->SetFixedRotation(true);		//fixes rotation so no spinning 
-				body[j]->CreateFixture(&fixtureDef);
-				rect[j].setSize(Vector2f(50, 50));
-				jointDef.Initialize(jointBody, body[j], jointBodyDef.position, bodyDef.position);
-				pendulum = world.CreateJoint(&jointDef);
+				makeNew = false;																		//sets makenew to false as to not repeat 
+				body[j] = world.CreateBody(&bodyDef);													//creates the body for the new box
+				body[j]->SetFixedRotation(true);														//fixes rotation so no spinning 
+				body[j]->CreateFixture(&fixtureDef);													//creates the fixture
+				rect[j].setSize(Vector2f(50, 50));														//creates the rectangle for sfml 
+				jointDef.Initialize(jointBody, body[j], jointBodyDef.position, bodyDef.position);		//defines initialization for the new distance joint
+				pendulum = world.CreateJoint(&jointDef);												//creates new distance joint
 			}
 
 			//
 
 			window.clear(); //clears window
 
-			for (int k = 0; k < j; ++k)
+			for (int k = 0; k < j; ++k)			//loops for the number of boxes in play
 			{
 
 				//gets and sets the position for both box2d and sfml
 
-				int l = k + 1;
-				b2Vec2 position = body[l]->GetPosition();
-				Vector2f sfmlPos = mtpfp(position);
-				rect[l].setPosition(sfmlPos);
+				int l = k + 1;								//sets l to the value of j by incrementing k
+				b2Vec2 position = body[l]->GetPosition();	//gets the position of the box2d body 
+				Vector2f sfmlPos = mtpfp(position);			//goes to a function that converts the value from metres(box2d) to pixels(sfml)
+				rect[l].setPosition(sfmlPos);				//sets the sfml rectangle to match the box2d body
 				//float angle = body[l]->GetAngle();
-				//angle = angle * -57.2958;
+				//angle = angle * -57.2958;					//rotation turned off temoprarily until a fix for misalligned boxes is found 
 				//rect[l].setRotation(angle);
 
 				//
@@ -278,7 +278,6 @@ int main()
 			}
 
 			window.display(); //displays drawn objects
-			cout << j << endl;
 
 		}
 
