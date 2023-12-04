@@ -257,7 +257,7 @@ int main()
 				//rotation turned off temoprarily until a fix for misalligned boxes is found
 				
 				//float angle = body[l]->GetAngle();		//gets the angle of the box from box2d
-				//angle = angle * -57.2958;					//converts from anticlockwise radians to clockwise degrees	 
+			    //angle = angle * -57.2958;					//converts from anticlockwise radians to clockwise degrees	 
 				//rect[l].setRotation(angle);				//sets the angle of the sfml rectangle 
 
 				//
