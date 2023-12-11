@@ -27,7 +27,7 @@ Vector2f mtpfp(b2Vec2 position)
 
 	Vector2f a(x, y);	//creates a vector2f with the converted values
 
-	return a;
+	return a;	//returns a as the vector2f that sfml can use 
 
 	//
 
@@ -38,8 +38,8 @@ int main()
 
 	//makes the box2d world - this  holds everything inside - also has the gravity 
 
-	b2Vec2 gravity(0.0f, 10.0f);
-	b2World world(gravity);
+	b2Vec2 gravity(0.0f, 10.0f);		//sets the strength of gravity 
+	b2World world(gravity);				//initializes the world 
 
 	//
 
@@ -60,16 +60,16 @@ int main()
 	//wall bodies - functionally the same as the ground box
 
 	b2BodyDef wallBody1Def;
-	wallBody1Def.position.Set(-1.0f, 0.0f);
+	wallBody1Def.position.Set(-1.0f, 0.0f);						//position of left wall
 
 	b2Body* wall1Body = world.CreateBody(&wallBody1Def);
 
 	b2PolygonShape wall1Box;
-	wall1Box.SetAsBox(1.5f, 50.0f);
+	wall1Box.SetAsBox(1.5f, 50.0f);								//size of left wall
 
-	wall1Body->CreateFixture(&wall1Box, 0.0f);
+	wall1Body->CreateFixture(&wall1Box, 0.0f);					//ties def and box together for left wall
 
-	b2BodyDef wallBody2Def;
+	b2BodyDef wallBody2Def;										//right wall 
 	wallBody2Def.position.Set(14.0f, 0.0f);
 
 	b2Body* wall2Body = world.CreateBody(&wallBody2Def);
@@ -80,8 +80,8 @@ int main()
 	wall2Body->CreateFixture(&wall2Box, 0.0f);
 #
 
-	b2BodyDef roofBodyDef;
-	roofBodyDef.position.Set(0.0f, -10.f);
+	b2BodyDef roofBodyDef;										//top barrier
+	roofBodyDef.position.Set(0.0f, -9.5f);
 
 	b2Body* roofBody = world.CreateBody(&roofBodyDef);
 
@@ -106,8 +106,6 @@ int main()
 	bodyDef.position.Set(10.0f, 2.5f);						//sets the starting position of the boxes
 	b2Body* body[200];										//creates an array of all the boxes that can be made during runtime
 	body[1] = { world.CreateBody(&bodyDef) };				//creates the body in the world
-	//body[1]->SetFixedRotation(true);						//fixes rotation so no spinning
-
 
 	b2PolygonShape dynamicBox;								//sets shape as dynamic box so that it can be moved 
 	dynamicBox.SetAsBox(0.5f, 0.5f);						//sets the size of the boxes 
@@ -117,8 +115,7 @@ int main()
 	fixtureDef.density = 1.0f;								//assigns the density of the box 
 	fixtureDef.friction = 0.05f;							//assigns the friction of the box
 	
-	//restitution is how much bounce it has 
-	fixtureDef.restitution = 0.5f;							//assigns the amount of bounce each box has 
+	fixtureDef.restitution = 5.0f;							//assigns the amount of bounce each box has 
 
 	body[1]->CreateFixture(&fixtureDef);					//creates the fixture between body and shape fort he boxes
 
@@ -163,10 +160,6 @@ int main()
 	RectangleShape botline;
 	botline.setPosition(21, 880);
 	botline.setSize(Vector2f(633, 5));
-
-	RectangleShape test;
-	test.setSize(Vector2f(50, 50));
-	test.setPosition(50, 50);
 
 	//
 
@@ -234,9 +227,8 @@ int main()
 			{
 				makeNew = false;																		//sets makenew to false as to not repeat 
 				body[j] = world.CreateBody(&bodyDef);													//creates the body for the new box
-				//body[j]->SetFixedRotation(true);														//fixes rotation so no spinning 
 				body[j]->CreateFixture(&fixtureDef);													//creates the fixture
-				rect[j].setOrigin(25, 25);
+				rect[j].setOrigin(25, 25);																//changes the origin to the centre 
 				rect[j].setSize(Vector2f(50, 50));														//creates the rectangle for sfml 
 				jointDef.Initialize(jointBody, body[j], jointBodyDef.position, bodyDef.position);		//defines initialization for the new distance joint
 				pendulum = world.CreateJoint(&jointDef);												//creates new distance joint
@@ -259,7 +251,7 @@ int main()
 				//rotation turned off temoprarily until a fix for misalligned boxes is found
 				
 				float angle = body[l]->GetAngle();		//gets the angle of the box from box2d
-			    angle = angle * 57.2958;					//converts from anticlockwise radians to clockwise degrees	 
+			    angle = angle * 57.2958;				//converts from anticlockwise radians to clockwise degrees	 
 				rect[l].setRotation(angle);				//sets the angle of the sfml rectangle 
 
 				//
@@ -273,7 +265,6 @@ int main()
 				window.draw(topline);
 				window.draw(botline);
 				window.draw(rect[l]);
-				window.draw(test);
 
 				//
 
