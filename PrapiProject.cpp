@@ -46,7 +46,7 @@ int main()
 	//creates the ground body for box2d - this stops things falling out the screen
 
 	b2BodyDef groundBodyDef;
-	groundBodyDef.position.Set(0.0f, 27.2f);					//defines the size of the groundbox
+	groundBodyDef.position.Set(0.0f, 27.7f);					//defines the size of the groundbox
 
 	b2Body* groundBody = world.CreateBody(&groundBodyDef);		//creates the groundbox in the world 
 
@@ -65,12 +65,12 @@ int main()
 	b2Body* wall1Body = world.CreateBody(&wallBody1Def);
 
 	b2PolygonShape wall1Box;
-	wall1Box.SetAsBox(1.0f, 50.0f);
+	wall1Box.SetAsBox(1.5f, 50.0f);
 
 	wall1Body->CreateFixture(&wall1Box, 0.0f);
 
 	b2BodyDef wallBody2Def;
-	wallBody2Def.position.Set(13.5f, 0.0f);
+	wallBody2Def.position.Set(14.0f, 0.0f);
 
 	b2Body* wall2Body = world.CreateBody(&wallBody2Def);
 
@@ -106,7 +106,7 @@ int main()
 	bodyDef.position.Set(10.0f, 2.5f);						//sets the starting position of the boxes
 	b2Body* body[200];										//creates an array of all the boxes that can be made during runtime
 	body[1] = { world.CreateBody(&bodyDef) };				//creates the body in the world
-	body[1]->SetFixedRotation(true);						//fixes rotation so no spinning
+	//body[1]->SetFixedRotation(true);						//fixes rotation so no spinning
 
 
 	b2PolygonShape dynamicBox;								//sets shape as dynamic box so that it can be moved 
@@ -123,6 +123,7 @@ int main()
 	body[1]->CreateFixture(&fixtureDef);					//creates the fixture between body and shape fort he boxes
 
 	RectangleShape rect[150];								//creates an array of empty rectangle shapes 
+	rect[1].setOrigin(25, 25);
 	rect[1].setSize(Vector2f(50, 50));						//sets the size of the first one 
 
 	//
@@ -233,8 +234,9 @@ int main()
 			{
 				makeNew = false;																		//sets makenew to false as to not repeat 
 				body[j] = world.CreateBody(&bodyDef);													//creates the body for the new box
-				body[j]->SetFixedRotation(true);														//fixes rotation so no spinning 
+				//body[j]->SetFixedRotation(true);														//fixes rotation so no spinning 
 				body[j]->CreateFixture(&fixtureDef);													//creates the fixture
+				rect[j].setOrigin(25, 25);
 				rect[j].setSize(Vector2f(50, 50));														//creates the rectangle for sfml 
 				jointDef.Initialize(jointBody, body[j], jointBodyDef.position, bodyDef.position);		//defines initialization for the new distance joint
 				pendulum = world.CreateJoint(&jointDef);												//creates new distance joint
@@ -256,9 +258,9 @@ int main()
 				
 				//rotation turned off temoprarily until a fix for misalligned boxes is found
 				
-				//float angle = body[l]->GetAngle();		//gets the angle of the box from box2d
-			    //angle = angle * -57.2958;					//converts from anticlockwise radians to clockwise degrees	 
-				//rect[l].setRotation(angle);				//sets the angle of the sfml rectangle 
+				float angle = body[l]->GetAngle();		//gets the angle of the box from box2d
+			    angle = angle * 57.2958;					//converts from anticlockwise radians to clockwise degrees	 
+				rect[l].setRotation(angle);				//sets the angle of the sfml rectangle 
 
 				//
 
