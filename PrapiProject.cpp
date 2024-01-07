@@ -115,7 +115,7 @@ int main()
 	fixtureDef.density = 1.0f;								//assigns the density of the box 
 	fixtureDef.friction = 0.05f;							//assigns the friction of the box
 	
-	fixtureDef.restitution = 5.0f;							//assigns the amount of bounce each box has 
+	fixtureDef.restitution = 0.5f;							//assigns the amount of bounce each box has 
 
 	body[1]->CreateFixture(&fixtureDef);					//creates the fixture between body and shape fort he boxes
 
@@ -248,7 +248,6 @@ int main()
 				Vector2f sfmlPos = mtpfp(position);			//goes to a function that converts the value from metres(box2d) to pixels(sfml)
 				rect[l].setPosition(sfmlPos);				//sets the sfml rectangle to match the box2d body
 				
-				//rotation turned off temoprarily until a fix for misalligned boxes is found
 				
 				float angle = body[l]->GetAngle();		//gets the angle of the box from box2d
 			    angle = angle * 57.2958;				//converts from anticlockwise radians to clockwise degrees	 
